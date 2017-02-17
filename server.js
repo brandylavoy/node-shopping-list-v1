@@ -1,13 +1,14 @@
+var express = require('express');
+var router = express.Router();
+var morgan = require('morgan');
+var bodyParser = require('body-parser');
 
-const express = require('express');
-const router = express.Router();
-const morgan = require('morgan');
-const bodyParser = require('body-parser');
+var _require = require('./models'),
+    ShoppingList = _require.ShoppingList,
+    Recipes = _require.Recipes;
 
-const {ShoppingList} = require('./models');
-
-const jsonParser = bodyParser.json();
-const app = express();
+var jsonParser = bodyParser.json();
+var app = express();
 
 // log the http layer
 app.use(morgan('common'));
@@ -20,10 +21,17 @@ ShoppingList.create('peppers', 4);
 
 // when the root of this router is called with GET, return
 // all current ShoppingList items
-app.get('/shopping-list', (req, res) => {
+app.get('/shopping-list', function (req, res) {
   res.json(ShoppingList.get());
 });
 
-app.listen(process.env.PORT || 8080, () => {
-  console.log(`Your app is listening on port ${process.env.PORT || 8080}`);
+Recipes.create('chocolate milk', ['milk', 'chocolate']);
+Recipes.create('mac and cheese', ['mac', 'cheese']);
+Recipes.create('peanut butter and jelly', ['peanut butter', 'jelly']);
+
+app.get('/recipes', function (req, res) {
+  res.json(Recipes.get());
+});
+app.listen(process.env.PORT || 8080, function () {
+  console.log('Your app is listening on port ' + (process.env.PORT || 8080));
 });
